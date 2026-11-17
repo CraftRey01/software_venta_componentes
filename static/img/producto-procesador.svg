@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 420" role="img" aria-labelledby="title">
+  <title id="title">Ilustración de procesador</title>
+  <defs>
+    <linearGradient id="bg" x2="1" y2="1"><stop stop-color="#172a46"/><stop offset="1" stop-color="#31537b"/></linearGradient>
+    <linearGradient id="chip" x2="1" y2="1"><stop stop-color="#f8c963"/><stop offset="1" stop-color="#cb8738"/></linearGradient>
+  </defs>
+  <rect width="640" height="420" rx="28" fill="url(#bg)"/>
+  <circle cx="320" cy="210" r="151" fill="none" stroke="#7189a8" stroke-opacity=".35" stroke-width="2"/>
+  <circle cx="320" cy="210" r="120" fill="none" stroke="#f8c963" stroke-opacity=".7" stroke-width="2" stroke-dasharray="6 11"/>
+  <g stroke="#f8c963" stroke-width="8" stroke-linecap="round">
+    <path d="M272 60v32m96-32v32M272 328v32m96-32v32M170 162h32m-32 96h32m236-96h32m-32 96h32"/>
+  </g>
+  <rect x="208" y="98" width="224" height="224" rx="22" fill="#17283c" stroke="url(#chip)" stroke-width="9"/>
+  <rect x="238" y="128" width="164" height="164" rx="15" fill="url(#chip)"/>
+  <path d="M266 241v-62h20l34 39v-39h22v62h-19l-35-40v40z" fill="#17283c"/>
+  <text x="320" y="353" text-anchor="middle" fill="#dbe5f1" font-family="Arial,sans-serif" font-size="15" letter-spacing="5">NEXT-LEVEL PERFORMANCE</text>
+</svg>

@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 420" role="img" aria-labelledby="title">
+  <title id="title">Ilustración de fuente de poder</title>
+  <defs><linearGradient id="bg" x2="1" y2="1"><stop stop-color="#233240"/><stop offset="1" stop-color="#374f60"/></linearGradient></defs>
+  <rect width="640" height="420" rx="28" fill="url(#bg)"/>
+  <circle cx="320" cy="205" r="148" fill="none" stroke="#6bdecd" stroke-opacity=".26" stroke-width="2"/>
+  <rect x="170" y="110" width="300" height="190" rx="22" fill="#151f29" stroke="#72dacd" stroke-width="4"/>
+  <circle cx="320" cy="203" r="75" fill="#1e3340" stroke="#547b86" stroke-width="5"/>
+  <circle cx="320" cy="203" r="17" fill="#72dacd"/>
+  <g fill="#4a8f8c"><path d="M320 137c20 22 20 43 0 55-20-17-20-35 0-55M386 203c-22 20-43 20-55 0 17-20 35-20 55 0M320 269c-20-22-20-43 0-55 20 17 20 35 0 55M254 203c22-20 43-20 55 0-17 20-35 20-55 0"/></g>
+  <text x="320" y="342" text-anchor="middle" fill="#c6efea" font-family="Arial,sans-serif" font-size="16" letter-spacing="5">POWER / STABILITY</text>
+</svg>

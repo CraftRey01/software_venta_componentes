@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 420" role="img" aria-labelledby="title">
+  <title id="title">Ilustración de computadora de escritorio</title>
+  <defs><linearGradient id="bg" x2="1" y2="1"><stop stop-color="#3b263c"/><stop offset="1" stop-color="#75435a"/></linearGradient><linearGradient id="glass" x2="1" y2="1"><stop stop-color="#44d5cc" stop-opacity=".85"/><stop offset="1" stop-color="#a56be2" stop-opacity=".75"/></linearGradient></defs>
+  <rect width="640" height="420" rx="28" fill="url(#bg)"/>
+  <circle cx="320" cy="205" r="158" fill="none" stroke="#f1b6d2" stroke-opacity=".2" stroke-width="2"/>
+  <rect x="214" y="82" width="212" height="249" rx="21" fill="#192334" stroke="#efbfd6" stroke-width="5"/>
+  <rect x="230" y="99" width="180" height="213" rx="12" fill="url(#glass)"/>
+  <circle cx="320" cy="162" r="41" fill="none" stroke="#f2e6fd" stroke-width="7"/>
+  <circle cx="320" cy="248" r="41" fill="none" stroke="#f2e6fd" stroke-width="7"/>
+  <path d="M320 127c13 16 13 29 0 38-13-12-13-25 0-38M355 162c-16 13-29 13-38 0 12-13 25-13 38 0M320 197c-13-16-13-29 0-38 13 12 13 25 0 38M285 162c16-13 29-13 38 0-12 13-25 13-38 0" fill="#f2e6fd"/>
+  <path d="M320 213c13 16 13 29 0 38-13-12-13-25 0-38M355 248c-16 13-29 13-38 0 12-13 25-13 38 0M320 283c-13-16-13-29 0-38 13 12 13 25 0 38M285 248c16-13 29-13 38 0-12 13-25 13-38 0" fill="#f2e6fd"/>
+  <text x="320" y="372" text-anchor="middle" fill="#fbe8f1" font-family="Arial,sans-serif" font-size="15" letter-spacing="5">CUSTOM BUILT / READY</text>
+</svg>

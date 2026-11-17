@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 420" role="img" aria-labelledby="title">
+  <title id="title">Ilustración de laptop</title>
+  <defs><linearGradient id="bg" x2="1" y2="1"><stop stop-color="#203a5b"/><stop offset="1" stop-color="#556d92"/></linearGradient><linearGradient id="screen" x2="1" y2="1"><stop stop-color="#64d8d1"/><stop offset="1" stop-color="#8568cf"/></linearGradient></defs>
+  <rect width="640" height="420" rx="28" fill="url(#bg)"/>
+  <circle cx="320" cy="205" r="155" fill="none" stroke="#fff" stroke-opacity=".15" stroke-width="2"/>
+  <rect x="173" y="92" width="294" height="199" rx="15" fill="#121d2d" stroke="#d2e0f2" stroke-width="5"/>
+  <rect x="187" y="106" width="266" height="171" rx="7" fill="url(#screen)"/>
+  <path d="M154 302h332l-27 26H181z" fill="#cad6e5"/>
+  <path d="M273 303h94l-7 12h-80z" fill="#788ba2"/>
+  <path d="M208 252c29-64 61-29 91-82 31 56 59 12 95-28v135H208z" fill="#ecf1fa" opacity=".38"/>
+  <circle cx="320" cy="99" r="3" fill="#9dadbf"/>
+  <text x="320" y="373" text-anchor="middle" fill="#e1e9f4" font-family="Arial,sans-serif" font-size="15" letter-spacing="5">WORK / PLAY / CREATE</text>
+</svg>

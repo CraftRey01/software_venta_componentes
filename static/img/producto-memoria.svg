@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 420" role="img" aria-labelledby="title">
+  <title id="title">Ilustración de memoria RAM</title>
+  <defs><linearGradient id="bg" x2="1" y2="1"><stop stop-color="#143a3c"/><stop offset="1" stop-color="#1b6658"/></linearGradient><linearGradient id="ram" x2="1"><stop stop-color="#b9e57c"/><stop offset="1" stop-color="#58b996"/></linearGradient></defs>
+  <rect width="640" height="420" rx="28" fill="url(#bg)"/>
+  <circle cx="320" cy="210" r="155" fill="none" stroke="#b9e57c" stroke-opacity=".25" stroke-width="2"/>
+  <rect x="114" y="158" width="412" height="102" rx="18" fill="#132a35" stroke="url(#ram)" stroke-width="5"/>
+  <g fill="url(#ram)">
+    <rect x="148" y="181" width="58" height="49" rx="7"/><rect x="222" y="181" width="58" height="49" rx="7"/>
+    <rect x="296" y="181" width="58" height="49" rx="7"/><rect x="370" y="181" width="58" height="49" rx="7"/>
+    <rect x="444" y="181" width="48" height="49" rx="7"/>
+  </g>
+  <path d="M153 260v25m30-25v25m30-25v25m30-25v25m30-25v25m30-25v25m30-25v25m30-25v25m30-25v25m30-25v25m30-25v25m30-25v25" stroke="#e3ca70" stroke-width="7" stroke-linecap="round"/>
+  <text x="320" y="112" text-anchor="middle" fill="#d8f1c0" font-family="Arial,sans-serif" font-size="18" letter-spacing="5">MEMORY / SPEED</text>
+</svg>
