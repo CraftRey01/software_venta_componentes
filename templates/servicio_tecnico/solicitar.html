@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% block title %}Agendar diagnóstico | TecnoParts{% endblock %}
+{% block content %}
+<section class="account-page">
+  <div class="section-heading">
+    <div><span class="eyebrow">SERVICIO TÉCNICO</span><h1>Agendar diagnóstico</h1></div>
+    <a class="button button--outline" href="{{ url_for('servicio_tecnico.mis_mantenimientos') }}">Mis mantenimientos</a>
+  </div>
+  <div class="access-form-card">
+    <p>Selecciona una cita de diagnóstico de 30 minutos, de lunes a sábado entre las 09:00 y las 17:00. El costo del mantenimiento se determina después de revisar el equipo.</p>
+    {% if slots %}
+      <form method="post" class="login-form">
+        <label for="fecha_cita">Horario disponible</label>
+        <select id="fecha_cita" name="fecha_cita" required>
+          {% for slot in slots %}
+            <option value="{{ slot.isoformat() }}" {{ "selected" if valores and valores.get('fecha_cita') == slot.isoformat() else "" }}>
+              {{ slot.strftime('%d/%m/%Y %H:%M') }}
+            </option>
+          {% endfor %}
+        </select>
+        <label for="tipo_equipo">Tipo de equipo</label>
+        <select id="tipo_equipo" name="tipo_equipo" required>
+          <option value="PC" {{ "selected" if valores and valores.get('tipo_equipo') == 'PC' else "" }}>PC de escritorio</option>
+          <option value="LAPTOP" {{ "selected" if valores and valores.get('tipo_equipo') == 'LAPTOP' else "" }}>Laptop</option>
+        </select>
+        <label for="marca">Marca</label>
+        <input id="marca" name="marca" maxlength="100" value="{{ valores.get('marca', '') if valores else '' }}" required>
+        <label for="modelo">Modelo</label>
+        <input id="modelo" name="modelo" maxlength="100" value="{{ valores.get('modelo', '') if valores else '' }}">
+        <label for="serie">Número de serie (opcional)</label>
+        <input id="serie" name="serie" maxlength="120" value="{{ valores.get('serie', '') if valores else '' }}">
+        <label for="problema">¿Qué problema presenta el equipo?</label>
+        <textarea id="problema" name="problema" maxlength="4000" rows="5" required>{{ valores.get('problema', '') if valores else '' }}</textarea>
+        <fieldset class="delivery-options">
+          <legend>Método de pago (se cobrará después del diagnóstico y mantenimiento)</legend>
+          <label class="delivery-option"><input type="radio" name="metodo_pago" value="EFECTIVO" required><span><strong>Efectivo</strong></span></label>
+          <label class="delivery-option"><input type="radio" name="metodo_pago" value="TRANSFERENCIA"><span><strong>Transferencia bancaria</strong></span></label>
+          <label class="delivery-option"><input type="radio" name="metodo_pago" value="QR"><span><strong>QR</strong></span></label>
+        </fieldset>
+        <button class="button button--primary" type="submit">Reservar cita de diagnóstico</button>
+      </form>
+    {% else %}
+      <div class="empty-state"><h2>No hay horarios disponibles</h2><p>Intenta nuevamente más adelante o comunícate con la tienda.</p></div>
+    {% endif %}
+  </div>
+</section>
+{% endblock %}

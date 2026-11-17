@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% block title %}Mis mantenimientos | TecnoParts{% endblock %}
+{% block content %}
+<section class="account-page">
+  <div class="section-heading">
+    <div><span class="eyebrow">SERVICIO TÉCNICO</span><h1>Mis mantenimientos</h1></div>
+    <a class="button button--primary" href="{{ url_for('servicio_tecnico.solicitar_mantenimiento') }}">Agendar mantenimiento</a>
+  </div>
+  {% if ordenes %}
+    <div class="order-list">
+      {% for orden in ordenes %}
+        <article class="order-card">
+          <div class="order-card__main">
+            <span class="eyebrow">ORDEN #{{ orden.id_orden }} · {{ orden.tipo_equipo }} {{ orden.marca_equipo }} {{ orden.modelo_equipo or '' }}</span>
+            <strong>Cita: {{ orden.fecha_cita.strftime('%d/%m/%Y %H:%M') if orden.fecha_cita else 'Sin cita' }}</strong>
+            <small>Problema: {{ orden.problema }}</small>
+            {% if orden.diagnostico %}<small>Diagnóstico: {{ orden.diagnostico }}</small>{% endif %}
+            {% if orden.trabajo_realizado %}<small>Trabajo: {{ orden.trabajo_realizado }}</small>{% endif %}
+          </div>
+          <span class="order-status">{{ orden.estado.replace('_', ' ') }}</span>
+          {% if orden.estado == 'FINALIZADA' %}<strong>Bs {{ "%.2f"|format(orden.costo) }}</strong>{% endif %}
+          {% if orden.id_factura %}
+            <a class="button button--outline button--small" href="{{ url_for('servicio_tecnico.factura_mantenimiento_cliente', id_factura=orden.id_factura) }}">Factura {{ orden.serie }}</a>
+          {% endif %}
+        </article>
+      {% endfor %}
+    </div>
+  {% else %}
+    <div class="empty-state"><h2>Aún no solicitaste mantenimiento</h2><p>Agenda un diagnóstico para tu PC o laptop.</p><a class="button button--primary" href="{{ url_for('servicio_tecnico.solicitar_mantenimiento') }}">Agendar mantenimiento</a></div>
+  {% endif %}
+</section>
+{% endblock %}

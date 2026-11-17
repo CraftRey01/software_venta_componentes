@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+{% block title %}Gestión de inventario | TecnoParts{% endblock %}
+{% block content %}
+<section class="account-page">
+  <div class="section-heading">
+    <div>
+      <span class="eyebrow">ADMINISTRACIÓN</span>
+      <h1>Gestión de inventario</h1>
+      <p class="section-subtitle">Consulta y actualiza existencias, ubicación y estado. Los cambios de cantidad se reflejan en el catálogo y punto de venta.</p>
+    </div>
+    <div class="inventory-actions">
+      <a class="button button--primary" href="{{ url_for('productos.inventario_nuevo') }}">+ Registrar producto</a>
+    </div>
+  </div>
+  <form class="inventory-filters" method="get">
+    <label class="sr-only" for="busqueda-inventario">Buscar producto o ubicación</label>
+    <input id="busqueda-inventario" name="q" value="{{ busqueda }}" placeholder="Buscar por producto o ubicación">
+    <label class="sr-only" for="estado-inventario">Estado</label>
+    <select id="estado-inventario" name="estado">
+      <option value="ACTIVO" {% if estado == 'ACTIVO' %}selected{% endif %}>Activos</option>
+      <option value="INACTIVO" {% if estado == 'INACTIVO' %}selected{% endif %}>Inactivos</option>
+      <option value="TODOS" {% if estado == 'TODOS' %}selected{% endif %}>Todos</option>
+    </select>
+    <button class="button button--primary" type="submit">Filtrar</button>
+  </form>
+  {% if registros %}
+    <div class="table-wrap">
+      <table class="data-table inventory-table">
+        <thead><tr><th>Producto</th><th>Existencia</th><th>Ubicación</th><th>Ingreso</th><th>Estado</th><th>Acciones</th></tr></thead>
+        <tbody>
+          {% for r in registros %}
+          <tr>
+            <td><strong>{{ r.producto }}</strong><small>ID producto: {{ r.id_producto }}</small></td>
+            <td><span class="inventory-quantity">{{ r.cantidad }}</span></td>
+            <td>{{ r.ubicacion or 'Sin ubicación' }}</td>
+            <td>{{ r.fecha_ingreso or '—' }}</td>
+            <td><span class="order-status">{{ 'Activo' if r.estado == 'ACTIVO' else 'Inactivo' }}</span></td>
+            <td>
+              <div class="inventory-row-actions">
+                <a class="button button--outline button--small" href="{{ url_for('productos.inventario_editar', id_inventario=r.id_inventario) }}">Editar</a>
+                {% if r.estado == 'ACTIVO' %}
+                <form method="post" action="{{ url_for('productos.inventario_eliminar', id_inventario=r.id_inventario) }}" onsubmit="return confirm('Se desactivará el registro y su stock quedará en cero. ¿Continuar?')">
+                  <button class="button button--danger button--small" type="submit">Desactivar</button>
+                </form>
+                {% endif %}
+              </div>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  {% else %}
+    <div class="empty-state">
+      <h2>No hay registros de inventario</h2>
+      <p>No se encontraron registros con estos filtros. Puedes registrar un producto que todavía no tenga inventario.</p>
+      <a class="button button--primary" href="{{ url_for('productos.inventario_nuevo') }}">Registrar producto</a>
+    </div>
+  {% endif %}
+</section>
+{% endblock %}

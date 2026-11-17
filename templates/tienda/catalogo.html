@@ -1,0 +1,113 @@
+{% extends "base.html" %}
+{% block title %}Tienda de computación y ofertas | TecnoParts{% endblock %}
+{% block content %}
+<section class="shop-hero">
+    <div class="shop-hero__copy">
+        <span class="eyebrow eyebrow--light">POTENCIA PARA TUS IDEAS</span>
+        <h1>Tu próximo upgrade<br><em>empieza aquí.</em></h1>
+        <p>Componentes, laptops y equipos listos para rendir. Tecnología elegida para jugar, crear y trabajar.</p>
+        <a class="button button--gold" href="#productos">Explorar productos <span aria-hidden="true">↓</span></a>
+        <div class="hero-trust"><span>✓ Productos seleccionados</span><span>✓ Soporte especializado</span></div>
+    </div>
+    <div class="shop-hero__art" aria-hidden="true">
+        <div class="orbit orbit--one"></div><div class="orbit orbit--two"></div>
+        <div class="hero-chip"><span>TP</span><small>BUILD<br>YOUR<br>FUTURE</small></div>
+        <span class="hero-spark hero-spark--one">✦</span><span class="hero-spark hero-spark--two">✧</span>
+        <div class="hero-art-caption">TECNOLOGÍA<br>QUE TE MUEVE</div>
+    </div>
+</section>
+
+<section class="shop-benefits" aria-label="Ventajas">
+    <div><span class="benefit-icon">✦</span><span><strong>Ofertas reales</strong><small>Precios especiales en productos seleccionados</small></span></div>
+    <div><span class="benefit-icon">⌁</span><span><strong>Asesoría experta</strong><small>Te ayudamos a elegir el equipo ideal</small></span></div>
+    <div><span class="benefit-icon">↗</span><span><strong>Servicio técnico</strong><small>Cuidado y soporte para tus equipos</small></span></div>
+</section>
+
+<section class="catalog-section" id="productos">
+    <div class="section-heading">
+        <div>
+            <span class="eyebrow">CATÁLOGO TECNOPARTS</span>
+            <h2>Encuentra tu próximo favorito</h2>
+        </div>
+        <form class="shop-search" method="get" action="{{ url_for('tienda.catalogo') }}">
+            <label class="sr-only" for="busqueda">Buscar productos</label>
+            <input id="busqueda" type="search" name="q" value="{{ busqueda }}" placeholder="Busca un producto o categoría">
+            <button type="submit" aria-label="Buscar">⌕</button>
+        </form>
+    </div>
+
+    <div class="category-pills">
+        <a class="category-pill {{ 'is-active' if not categoria_seleccionada else '' }}" href="{{ url_for('tienda.catalogo') }}">Todo</a>
+        {% for categoria in categorias %}
+            <a class="category-pill {{ 'is-active' if categoria_seleccionada == categoria.id_categoria else '' }}"
+               href="{{ url_for('tienda.catalogo', categoria=categoria.id_categoria, q=busqueda) }}">{{ categoria.nombre }}</a>
+        {% endfor %}
+    </div>
+
+    {% if error_catalogo %}
+        <div class="empty-state"><h3>La tienda está temporalmente desconectada</h3><p>Intenta nuevamente en unos minutos.</p></div>
+    {% elif productos %}
+        <div class="product-grid">
+            {% for p in productos %}
+                <article class="product-card">
+                    <div class="product-visual">
+                        {% if p.precio_oferta %}<span class="sale-badge">OFERTA</span>{% endif %}
+                        <img src="{{ p.imagen_url or url_for('static', filename='img/producto-procesador.svg') }}"
+                             alt="{{ p.nombre }}" loading="lazy">
+                        <span class="product-category">{{ p.categoria }}</span>
+                    </div>
+                    <div class="product-info">
+                        <span class="product-brand">{{ p.marca or p.categoria }}</span>
+                        <h3>{{ p.nombre }}</h3>
+                        {% if p.caracteristicas %}
+                            <div class="product-features">
+                                <h4 class="product-features__title">Especificaciones</h4>
+                                <dl class="product-spec-list">
+                                    {% for caracteristica in p.caracteristicas %}
+                                        <div class="product-spec">
+                                            <dt>{{ caracteristica.atributo }}</dt>
+                                            <dd>{{ caracteristica.valor }}</dd>
+                                        </div>
+                                    {% endfor %}
+                                </dl>
+                                {% if p.descripcion_adicional %}
+                                    <p class="product-features__description">{{ p.descripcion_adicional }}</p>
+                                {% endif %}
+                            </div>
+                        {% elif p.descripcion %}
+                            <div class="product-features">
+                                <h4 class="product-features__title">Descripción</h4>
+                                <p class="product-features__description">{{ p.descripcion }}</p>
+                            </div>
+                        {% else %}
+                            <p class="product-features__empty">Características aún no registradas. Consúltanos para más información.</p>
+                        {% endif %}
+                        <div class="product-price">
+                            {% if p.precio_oferta %}
+                                <span class="price-old">Bs {{ "%.2f"|format(p.precio) }}</span>
+                                <strong>Bs {{ "%.2f"|format(p.precio_oferta) }}</strong>
+                            {% else %}
+                                <strong>Bs {{ "%.2f"|format(p.precio) }}</strong>
+                            {% endif %}
+                        </div>
+                        <div class="product-stock">{{ p.stock }} disponibles</div>
+                        {% if session.get('rol') == 'CLIENTE' %}
+                            <form method="post" action="{{ url_for('tienda.agregar_carrito', id_producto=p.id_producto) }}" class="add-cart-form">
+                                <label class="sr-only" for="cantidad-{{ p.id_producto }}">Cantidad</label>
+                                <input id="cantidad-{{ p.id_producto }}" type="number" name="cantidad" value="1" min="1" max="{{ p.stock }}">
+                                <button class="button button--dark" type="submit">Agregar al carrito <span aria-hidden="true">→</span></button>
+                            </form>
+                        {% elif session.get('rol') %}
+                            <span class="staff-note">Vista de catálogo para personal</span>
+                        {% else %}
+                            <a class="button button--dark add-cart-link" href="{{ url_for('auth.login') }}">Comprar en línea <span aria-hidden="true">→</span></a>
+                        {% endif %}
+                    </div>
+                </article>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="empty-state"><h3>No encontramos productos</h3><p>Prueba otra búsqueda o selecciona otra categoría.</p></div>
+    {% endif %}
+</section>
+{% endblock %}

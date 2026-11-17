@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% block titulo %}Venta #{{ venta.id_venta if venta else '' }} — TecnoParts{% endblock %}
+
+{% block contenido %}
+{% if not venta %}
+  <div class="vacio">Venta no encontrada.</div>
+{% else %}
+  <p><a href="{{ url_for('ventas.historial') }}">&larr; Volver al historial</a></p>
+  <h1>Venta #{{ venta.id_venta }}</h1>
+  <p style="color: var(--slate);">
+    {{ venta.fecha.strftime('%d/%m/%Y %H:%M') }} ·
+    Cliente: {{ (venta.apellidos + ", " + venta.nombres) if venta.nombres else "Cliente ocasional" }}
+  </p>
+
+  <div class="tabla-envoltura" style="margin-top:1.25rem;">
+    <table>
+      <thead><tr><th>Producto</th><th>Cantidad</th><th>Precio unitario</th><th>Subtotal</th></tr></thead>
+      <tbody>
+        {% for l in lineas %}
+        <tr>
+          <td>{{ l.nombre }}</td>
+          <td>{{ l.cantidad }}</td>
+          <td>Bs {{ "%.2f"|format(l.precio_unitario) }}</td>
+          <td>Bs {{ "%.2f"|format(l.subtotal) }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  <div class="carrito-total" style="max-width: 300px; margin-left:auto;">
+    <span>Total</span><span>Bs {{ "%.2f"|format(venta.total) }}</span>
+  </div>
+{% endif %}
+{% endblock %}

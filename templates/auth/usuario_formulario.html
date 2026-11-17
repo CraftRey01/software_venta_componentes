@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+{% block title %}{{ "Editar usuario" if editando else "Crear usuario" }} | TecnoParts{% endblock %}
+{% block content %}
+<section class="account-page">
+  <div class="section-heading">
+    <div>
+      <span class="eyebrow">ADMINISTRACIÓN</span>
+      <h1>{{ "Editar usuario" if editando else "Crear usuario de personal" }}</h1>
+    </div>
+    <a class="button button--outline" href="{{ url_for('auth.usuarios') }}">Volver a usuarios</a>
+  </div>
+  <div class="access-form-card">
+    <form method="post" class="login-form">
+      {% if not editando %}
+        <label for="rol">Tipo de usuario</label>
+        <select id="rol" name="rol" required>
+          <option value="VENDEDOR" {{ "selected" if rol == "VENDEDOR" else "" }}>Vendedor</option>
+          <option value="ADMINISTRADOR" {{ "selected" if rol == "ADMINISTRADOR" else "" }}>Administrador</option>
+        </select>
+      {% else %}
+        <p>Tipo de cuenta: <strong>{{ "Vendedor" if rol == "VENDEDOR" else "Administrador" }}</strong></p>
+      {% endif %}
+      <label for="usuario">Nombre de usuario</label>
+      <input id="usuario" name="usuario" maxlength="60" value="{{ datos.usuario }}" autocomplete="username" required>
+      {% if rol == "VENDEDOR" %}
+        <label for="nombre">Nombre</label>
+        <input id="nombre" name="nombre" maxlength="100" value="{{ datos.nombre }}" required>
+        <label for="apellido">Apellido</label>
+        <input id="apellido" name="apellido" maxlength="100" value="{{ datos.apellido }}" required>
+        <label for="ci">CI</label>
+        <input id="ci" name="ci" maxlength="30" value="{{ datos.ci }}">
+        <label for="telefono">Teléfono</label>
+        <input id="telefono" name="telefono" maxlength="30" value="{{ datos.telefono }}">
+        <label for="email">Correo electrónico</label>
+        <input id="email" name="email" type="email" maxlength="254" value="{{ datos.email }}">
+      {% endif %}
+      <label for="password">
+        {{ "Nueva contraseña (opcional)" if editando else "Contraseña (mínimo 8 caracteres)" }}
+      </label>
+      <input id="password" name="password" type="password" minlength="8"
+             autocomplete="new-password" {{ "" if editando else "required" }}>
+      <button class="button button--primary" type="submit">
+        {{ "Guardar cambios" if editando else "Crear cuenta" }}
+      </button>
+    </form>
+  </div>
+</section>
+{% endblock %}

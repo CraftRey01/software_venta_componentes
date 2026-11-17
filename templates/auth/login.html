@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block title %}Iniciar sesión | TecnoParts{% endblock %}
+{% block content %}
+<section class="access-page">
+  <div class="access-heading">
+    <span class="eyebrow">PORTAL TECNOPARTS</span>
+    <h1>Inicia sesión</h1>
+    <p>Ingresa tu usuario y contraseña. Abriremos automáticamente el espacio correspondiente a tu cuenta.</p>
+  </div>
+  <div class="access-form-card">
+    <form method="post" class="login-form">
+      <label for="usuario">Usuario</label>
+      <input id="usuario" name="usuario" autocomplete="username" required autofocus>
+      <label for="password">Contraseña</label>
+      <input id="password" name="password" type="password" autocomplete="current-password" required>
+      <button class="button button--primary" type="submit">Continuar</button>
+    </form>
+  </div>
+</section>
+{% endblock %}

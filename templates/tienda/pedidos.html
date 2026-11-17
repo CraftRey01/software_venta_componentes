@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% block title %}Historial de compras | TecnoParts{% endblock %}
+{% block content %}
+<section class="account-page">
+    <div class="section-heading">
+        <div><span class="eyebrow">TU ACTIVIDAD</span><h1>Historial de compras</h1></div>
+        <a class="button button--outline" href="{{ url_for('tienda.catalogo') }}">Volver a la tienda</a>
+    </div>
+    {% if pedidos %}
+        <div class="order-list">
+            {% for pedido in pedidos %}
+                <article class="order-card">
+                    <div class="order-card__main">
+                        <span class="eyebrow">PEDIDO #{{ pedido.id_pedido }}</span>
+                        <strong>{{ pedido.fecha.strftime('%d/%m/%Y') if pedido.fecha else '' }}</strong>
+                        {% if pedido.destino %}
+                            <small>
+                              {% if pedido.modalidad_entrega == 'RECOGIDA' %}
+                                Recogida en tienda
+                              {% else %}
+                                Entrega a {{ pedido.pais or 'destino indicado' }} · {{ pedido.destino }}
+                              {% endif %}
+                            </small>
+                        {% endif %}
+                    </div>
+                    <span class="order-status">{{ pedido.estado }}</span>
+                    <strong class="order-total">Bs {{ "%.2f"|format(pedido.total) }}</strong>
+                    {% if pedido.id_factura %}
+                        <a class="button button--outline button--small" href="{{ url_for('tienda.factura_cliente', id_factura=pedido.id_factura) }}">Ver factura {{ pedido.factura }}</a>
+                    {% endif %}
+                </article>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="empty-state"><h2>Aún no tienes pedidos</h2><p>Cuando confirmes una compra, podrás seguir su estado aquí.</p><a class="button button--primary" href="{{ url_for('tienda.catalogo') }}">Explorar catálogo</a></div>
+    {% endif %}
+</section>
+{% endblock %}

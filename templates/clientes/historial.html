@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+{% block titulo %}Historial de {{ cliente.nombres }} — TecnoParts{% endblock %}
+
+{% block contenido %}
+{% if not cliente %}
+  <div class="vacio">Cliente no encontrado.</div>
+{% else %}
+  <p><a href="{{ url_for('clientes.listar') }}">&larr; Volver a clientes</a></p>
+  <h1>{{ cliente.apellidos }}, {{ cliente.nombres }}</h1>
+  <p style="color: var(--slate);">{{ cliente.telefono or "Sin teléfono" }} · {{ cliente.email or "Sin email" }}</p>
+
+  <h2 style="margin-top: 2rem;">Compras</h2>
+  {% if ventas %}
+  <div class="tabla-envoltura">
+    <table>
+      <thead><tr><th>#</th><th>Fecha</th><th>Total</th><th></th></tr></thead>
+      <tbody>
+        {% for v in ventas %}
+        <tr>
+          <td>{{ v.id_venta }}</td>
+          <td>{{ v.fecha.strftime('%d/%m/%Y %H:%M') }}</td>
+          <td>Bs {{ "%.2f"|format(v.total) }}</td>
+          <td><a class="boton boton--fantasma boton--pequeno" href="{{ url_for('ventas.detalle', id_venta=v.id_venta) }}">Ver</a></td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% else %}
+    <div class="vacio">Este cliente todavía no tiene compras registradas.</div>
+  {% endif %}
+
+  <h2 style="margin-top: 2rem;">Servicio técnico</h2>
+  {% if servicios %}
+  <div class="tabla-envoltura">
+    <table>
+      <thead><tr><th>#</th><th>Equipo</th><th>Estado</th><th>Ingreso</th><th></th></tr></thead>
+      <tbody>
+        {% for s in servicios %}
+        <tr>
+          <td>{{ s.id_servicio }}</td>
+          <td>{{ s.equipo }}</td>
+          <td><span class="etiqueta etiqueta--info">{{ s.estado }}</span></td>
+          <td>{{ s.fecha_ingreso.strftime('%d/%m/%Y') }}</td>
+          <td><a class="boton boton--fantasma boton--pequeno" href="{{ url_for('servicio_tecnico.detalle', id_servicio=s.id_servicio) }}">Ver</a></td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% else %}
+    <div class="vacio">Este cliente todavía no registró equipos en servicio técnico.</div>
+  {% endif %}
+{% endif %}
+{% endblock %}

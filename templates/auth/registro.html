@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% block title %}Crear cuenta | TecnoParts{% endblock %}
+{% block content %}
+<section class="access-page">
+  <div class="access-heading">
+    <span class="eyebrow">ÚNETE A TECNOPARTS</span>
+    <h1>Crear cuenta</h1>
+    <p>Regístrate para comprar en línea y consultar el historial de tus pedidos.</p>
+  </div>
+  <div class="access-form-card">
+    <form method="post" class="login-form">
+      <label for="nombre">Nombre completo</label>
+      <input id="nombre" name="nombre" maxlength="150" value="{{ datos.nombre }}" autocomplete="name" required>
+      <label for="telefono">Teléfono</label>
+      <input id="telefono" name="telefono" maxlength="30" value="{{ datos.telefono }}" autocomplete="tel">
+      <label for="direccion">Dirección principal (opcional)</label>
+      <input id="direccion" name="direccion" maxlength="255" value="{{ datos.direccion }}" autocomplete="street-address">
+      <label for="email">Correo electrónico</label>
+      <input id="email" name="email" type="email" maxlength="254" value="{{ datos.email }}" autocomplete="email" required>
+      <label for="usuario">Nombre de usuario</label>
+      <input id="usuario" name="usuario" maxlength="60" value="{{ datos.usuario }}" autocomplete="username" required>
+      <label for="password">Contraseña (mínimo 8 caracteres)</label>
+      <input id="password" name="password" type="password" minlength="8" autocomplete="new-password" required>
+      <label for="confirmacion">Confirma la contraseña</label>
+      <input id="confirmacion" name="confirmacion" type="password" minlength="8" autocomplete="new-password" required>
+      <button class="button button--primary" type="submit">Crear cuenta</button>
+    </form>
+    <p><a href="{{ url_for('auth.login') }}">Ya tengo cuenta</a></p>
+  </div>
+</section>
+{% endblock %}

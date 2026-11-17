@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+{% block content %}
+<section class="account-page">
+  <div class="section-heading">
+    <div><span class="eyebrow">ADMINISTRACIÓN</span><h1>Ingresos por categoría</h1><p class="section-subtitle">Consulta el resumen de ingresos agrupado por categoría de producto.</p></div>
+  </div>
+  <form class="report-filter" method="post">
+    <div class="field"><label for="fecha_inicio">Fecha de inicio</label><input id="fecha_inicio" type="date" name="fecha_inicio" required></div>
+    <div class="field"><label for="fecha_fin">Fecha de fin</label><input id="fecha_fin" type="date" name="fecha_fin" required></div>
+    <button class="button button--primary" type="submit">Generar reporte</button>
+  </form>
+  {% if datos %}
+  <div class="table-wrap">
+    <table class="data-table">
+      <thead><tr><th>Categoría</th><th>Ingresos</th></tr></thead>
+      <tbody>{% for d in datos %}<tr><td>{{ d.categoria }}</td><td>Bs {{ "%.2f"|format(d.total_ingresos) }}</td></tr>{% endfor %}</tbody>
+    </table>
+  </div>
+  {% endif %}
+</section>
+{% endblock %}

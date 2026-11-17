@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+{% block title %}Factura {{ factura.serie }} | TecnoParts{% endblock %}
+{% block content %}
+<section class="account-page">
+  <div class="section-heading no-print">
+    <div><span class="eyebrow">COMPROBANTE DE VENTA</span><h1>Factura {{ factura.serie }}</h1></div>
+    <div class="invoice-actions">
+      <a class="button button--outline" href="{{ url_for('tienda.mis_pedidos') if vista_cliente else url_for('ventas.facturas') }}">{{ 'Volver a mis pedidos' if vista_cliente else 'Volver a facturas' }}</a>
+      <button class="button button--primary" type="button" onclick="window.print()">Imprimir</button>
+    </div>
+  </div>
+  <article class="invoice">
+    <header class="invoice-header">
+      <div><span class="eyebrow">TECNOPARTS</span><h2>Comprobante de venta</h2></div>
+      <div class="invoice-number"><small>FACTURA</small><strong>{{ factura.serie }}</strong><small>{{ 'Mantenimiento' if factura.id_orden else 'Venta' }} #{{ factura.id_orden if factura.id_orden else factura.id_pedido }}</small></div>
+    </header>
+    <div class="invoice-meta">
+      <div><small>CLIENTE</small><strong>{{ factura.cliente }}</strong><span>{{ factura.email or factura.telefono or 'Sin correo registrado' }}</span></div>
+      <div><small>{{ 'TÉCNICO' if factura.id_orden else 'VENDEDOR' }}</small><strong>{{ factura.vendedor }}</strong></div>
+      <div><small>FECHA</small><strong>{{ factura.fecha.strftime('%d/%m/%Y %H:%M') if factura.fecha else '' }}</strong></div>
+      <div><small>MÉTODO DE PAGO</small><strong>{{ factura.metodo }}</strong></div>
+      {% if factura.destino %}
+      <div><small>{{ 'RECOGIDA' if factura.modalidad_entrega == 'RECOGIDA' else 'PUNTO DE ENTREGA' }}</small><strong>{{ factura.destino }}{% if factura.pais %} · {{ factura.pais }}{% endif %}</strong></div>
+      {% endif %}
+      {% if factura.estado_pago is defined %}
+      <div><small>ESTADO DEL PAGO</small><strong>{{ 'Pendiente de coordinación' if factura.estado_pago == 'PENDIENTE' else factura.estado_pago }}</strong></div>
+      {% endif %}
+    </div>
+    {% if factura.id_orden %}
+      <div class="access-form-card">
+        <p><strong>Equipo:</strong> {{ factura.tipo_equipo }} {{ factura.marca_equipo }} {{ factura.modelo_equipo or '' }}</p>
+        <p><strong>Problema reportado:</strong> {{ factura.problema }}</p>
+        <p><strong>Diagnóstico:</strong> {{ factura.diagnostico }}</p>
+        <p><strong>Mantenimiento realizado:</strong> {{ factura.trabajo_realizado }}</p>
+      </div>
+    {% endif %}
+    <div class="table-wrap">
+      <table class="data-table">
+        <thead><tr><th>Producto</th><th>Cantidad</th><th>Precio unitario</th><th>Subtotal</th></tr></thead>
+        <tbody>
+          {% for l in lineas %}
+            <tr><td>{{ l.nombre }}</td><td>{{ l.cantidad }}</td><td>Bs {{ "%.2f"|format(l.precio_unitario) }}</td><td>Bs {{ "%.2f"|format(l.subtotal) }}</td></tr>
+          {% endfor %}
+          {% if factura.costo_entrega %}
+            <tr><td>Costo de entrega</td><td>1</td><td>Bs {{ "%.2f"|format(factura.costo_entrega) }}</td><td>Bs {{ "%.2f"|format(factura.costo_entrega) }}</td></tr>
+          {% endif %}
+        </tbody>
+      </table>
+    </div>
+    <div class="invoice-total"><span>TOTAL DE LA COMPRA</span><strong>Bs {{ "%.2f"|format(factura.monto) }}</strong></div>
+    <p class="invoice-thanks">{% if vista_cliente %}Esta factura queda disponible en tu cuenta, en “Mis pedidos”. Puedes imprimirla o guardarla como PDF.{% else %}Gracias por comprar en TecnoParts.{% endif %}</p>
+  </article>
+</section>
+{% endblock %}

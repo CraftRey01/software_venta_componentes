@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% block titulo %}Clientes — TecnoParts{% endblock %}
+
+{% block contenido %}
+<div class="encabezado-seccion">
+  <div>
+    <h1>Clientes</h1>
+    <p>Historial de compras y servicio técnico por cliente.</p>
+  </div>
+  <a href="{{ url_for('clientes.nuevo') }}" class="boton boton--acento">+ Nuevo cliente</a>
+</div>
+
+<form class="filtros" method="get">
+  <input type="text" name="q" placeholder="Buscar por nombre o teléfono..." value="{{ busqueda }}">
+  <button class="boton boton--fantasma" type="submit">Buscar</button>
+</form>
+
+{% if clientes %}
+<div class="tabla-envoltura">
+  <table>
+    <thead><tr><th>Nombre</th><th>Teléfono</th><th>Email</th><th></th></tr></thead>
+    <tbody>
+      {% for c in clientes %}
+      <tr>
+        <td><strong>{{ c.apellidos }}, {{ c.nombres }}</strong></td>
+        <td>{{ c.telefono or "—" }}</td>
+        <td>{{ c.email or "—" }}</td>
+        <td class="tabla-acciones">
+          <a class="boton boton--fantasma boton--pequeno" href="{{ url_for('clientes.historial', id_cliente=c.id_cliente) }}">Historial</a>
+          <a class="boton boton--fantasma boton--pequeno" href="{{ url_for('clientes.editar', id_cliente=c.id_cliente) }}">Editar</a>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% else %}
+  <div class="vacio">No hay clientes registrados todavía.</div>
+{% endif %}
+{% endblock %}

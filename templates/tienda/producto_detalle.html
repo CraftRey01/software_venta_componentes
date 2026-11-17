@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block titulo %}{{ producto.nombre if producto else "Producto" }} — TecnoParts{% endblock %}
+
+{% block contenido %}
+{% if not producto %}
+  <div class="vacio">Producto no encontrado.</div>
+{% else %}
+  <p><a href="{{ url_for('tienda.catalogo') }}">&larr; Volver al catálogo</a></p>
+  <div class="formulario" style="max-width: 720px;">
+    <span class="tarjeta-producto__categoria">{{ producto.categoria_nombre }}</span>
+    <h1>{{ producto.nombre }}</h1>
+    <p style="color: var(--slate);">{{ producto.marca }}</p>
+    <p>{{ producto.descripcion or "Sin descripción adicional." }}</p>
+    <p class="tarjeta-producto__precio" style="font-size: 1.6rem;">Bs {{ "%.2f"|format(producto.precio) }}</p>
+    {% if producto.stock > 0 %}
+      <span class="etiqueta etiqueta--ok">{{ producto.stock }} disponibles</span>
+    {% else %}
+      <span class="etiqueta etiqueta--alerta">Sin stock</span>
+    {% endif %}
+    <p style="margin-top:1.5rem; color: var(--slate); font-size: 0.9rem;">
+      Para comprar o consultar por este producto, acércate a tienda o contáctanos — la compra en línea llegará en una próxima versión de este sistema.
+    </p>
+  </div>
+{% endif %}
+{% endblock %}

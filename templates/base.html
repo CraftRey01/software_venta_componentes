@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{% block title %}TecnoParts | Tecnología para lo que viene{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <header class="site-header{% if session.get('rol') == 'ADMINISTRADOR' %} site-header--admin{% endif %}">
+        <a class="brand" href="{{ url_for('tienda.catalogo') }}" aria-label="TecnoParts, inicio">
+            <span class="brand-mark">T</span>
+            <span>Tecno<span class="brand-accent">Parts</span><small>TECNOLOGÍA Y SERVICIO</small></span>
+        </a>
+        <nav class="site-nav{% if session.get('rol') == 'ADMINISTRADOR' %} site-nav--admin{% endif %}" aria-label="Navegación principal">
+            {% if session.get('rol') == 'CLIENTE' %}
+                <a href="{{ url_for('tienda.carrito') }}">Mi carrito{% if session.get('carrito') %} <span class="cart-count">{{ session.get('carrito').values()|sum }}</span>{% endif %}</a>
+                <a href="{{ url_for('tienda.mis_pedidos') }}">Ver historial</a>
+                <a href="{{ url_for('auth.mi_cuenta') }}">Mi cuenta</a>
+                <a href="{{ url_for('servicio_tecnico.mis_mantenimientos') }}">Mantenimiento</a>
+            {% elif session.get('rol') == 'VENDEDOR' %}
+                <a href="{{ url_for('ventas.punto_venta') }}">Punto de venta</a>
+                <a href="{{ url_for('ventas.facturas') }}">Facturas</a>
+                <a href="{{ url_for('servicio_tecnico.listar_mantenimientos') }}">Servicio técnico</a>
+                <a href="{{ url_for('servicio_tecnico.garantia') }}">Garantías</a>
+            {% elif session.get('rol') == 'ADMINISTRADOR' %}
+                <a href="{{ url_for('reportes.ingresos') }}">Ingresos</a>
+                <a href="{{ url_for('productos.inventario') }}">Gestión de inventario</a>
+                <a href="{{ url_for('reportes.rop') }}">Alertas ROP</a>
+                <a href="{{ url_for('productos.listar') }}">Productos</a>
+                <a href="{{ url_for('ventas.facturas') }}">Facturas</a>
+                <a href="{{ url_for('ventas.punto_venta') }}">Punto de venta</a>
+                <a href="{{ url_for('servicio_tecnico.listar_mantenimientos') }}">Servicio técnico</a>
+                <a href="{{ url_for('auth.usuarios') }}">Gestión de usuarios</a>
+            {% endif %}
+        </nav>
+        <div class="header-action">
+            {% if session.get('usuario') %}
+                <span class="user-greeting">{{ session.get('usuario') }}</span>
+                <a class="button button--outline button--small" href="{{ url_for('auth.logout') }}">Salir</a>
+            {% else %}
+                <a class="button button--outline button--small" href="{{ url_for('auth.registro') }}">Crear cuenta</a>
+                <a class="button button--outline button--small" href="{{ url_for('auth.login') }}">Iniciar sesión</a>
+            {% endif %}
+        </div>
+    </header>
+
+    <main>
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <div class="flash-stack">
+                    {% for category, message in messages %}
+                        <div class="flash flash--{{ category }}">{{ message }}</div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        {% endwith %}
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer class="site-footer">
+        <a class="brand brand--footer" href="{{ url_for('tienda.catalogo') }}">
+            <span class="brand-mark">T</span><span>Tecno<span class="brand-accent">Parts</span></span>
+        </a>
+        <span>Tu próximo upgrade empieza aquí.</span>
+        <a href="{{ url_for('auth.login') }}">Acceso a personal</a>
+    </footer>
+</body>
+</html>

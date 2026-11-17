@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% block titulo %}{{ "Editar cliente" if cliente else "Nuevo cliente" }} — TecnoParts{% endblock %}
+
+{% block contenido %}
+<h1>{{ "Editar cliente" if cliente else "Nuevo cliente" }}</h1>
+
+<form class="formulario" method="post">
+  <div class="fila-campos">
+    <div class="campo">
+      <label for="nombres">Nombres</label>
+      <input type="text" id="nombres" name="nombres" required value="{{ cliente.nombres if cliente else '' }}">
+    </div>
+    <div class="campo">
+      <label for="apellidos">Apellidos</label>
+      <input type="text" id="apellidos" name="apellidos" required value="{{ cliente.apellidos if cliente else '' }}">
+    </div>
+  </div>
+
+  <div class="fila-campos">
+    <div class="campo">
+      <label for="telefono">Teléfono</label>
+      <input type="text" id="telefono" name="telefono" value="{{ cliente.telefono if cliente else '' }}">
+    </div>
+    <div class="campo">
+      <label for="email">Email</label>
+      <input type="email" id="email" name="email" value="{{ cliente.email if cliente else '' }}">
+    </div>
+  </div>
+
+  <div class="campo">
+    <label for="direccion">Dirección</label>
+    <input type="text" id="direccion" name="direccion" value="{{ cliente.direccion if cliente else '' }}">
+  </div>
+
+  <button type="submit" class="boton boton--primario">Guardar</button>
+  <a href="{{ url_for('clientes.listar') }}" class="boton boton--fantasma">Cancelar</a>
+</form>
+{% endblock %}

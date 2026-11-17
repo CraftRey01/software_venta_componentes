@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% block title %}Facturas | TecnoParts{% endblock %}
+{% block content %}
+<section class="account-page">
+  <div class="section-heading">
+    <div><span class="eyebrow">VENTAS REGISTRADAS</span><h1>Facturas</h1></div>
+    <a class="button button--primary" href="{{ url_for('ventas.punto_venta') }}">Nueva venta</a>
+  </div>
+  {% if facturas %}
+    <div class="table-wrap">
+      <table class="data-table">
+        <thead><tr><th>Factura</th><th>Fecha</th><th>Cliente</th><th>Responsable</th><th>Tipo</th><th>Referencia</th><th>Total</th><th></th></tr></thead>
+        <tbody>
+          {% for f in facturas %}
+            <tr>
+              <td><strong>{{ f.serie }}</strong></td>
+              <td>{{ f.fecha.strftime('%d/%m/%Y %H:%M') if f.fecha else '' }}</td>
+              <td>{{ f.cliente }}</td>
+              <td>{{ f.vendedor }}</td>
+              <td>{{ f.tipo }}</td>
+              <td>#{{ f.id_pedido if f.id_pedido else f.id_orden }}</td>
+              <td>Bs {{ "%.2f"|format(f.monto) }}</td>
+              <td><a class="button button--outline button--small" href="{{ url_for('ventas.detalle_factura', id_factura=f.id_factura) }}">Ver factura</a></td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  {% else %}
+    <div class="empty-state"><h2>Aún no hay facturas</h2><p>Al registrar una venta se generará su factura aquí.</p></div>
+  {% endif %}
+</section>
+{% endblock %}

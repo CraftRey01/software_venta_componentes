@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+{% block title %}Orden de mantenimiento #{{ orden.id_orden }} | TecnoParts{% endblock %}
+{% block content %}
+<section class="account-page">
+  <div class="section-heading">
+    <div><span class="eyebrow">SERVICIO TÉCNICO · ORDEN #{{ orden.id_orden }}</span><h1>{{ orden.tipo_equipo }} {{ orden.marca_equipo }} {{ orden.modelo_equipo or '' }}</h1></div>
+    <a class="button button--outline" href="{{ url_for('servicio_tecnico.listar_mantenimientos') }}">Volver a órdenes</a>
+  </div>
+  <article class="access-form-card">
+    <p><strong>Cliente:</strong> {{ orden.cliente }} · {{ orden.telefono or 'Sin teléfono' }}</p>
+    <p><strong>Cita:</strong> {{ orden.fecha_cita.strftime('%d/%m/%Y %H:%M') if orden.fecha_cita else '—' }} · <strong>Número de serie:</strong> {{ orden.serie_equipo or 'No indicado' }}</p>
+    <p><strong>Problema reportado:</strong> {{ orden.descripcion }}</p>
+    <p><strong>Método de pago elegido:</strong> {{ orden.metodo_pago }}</p>
+  </article>
+  {% if orden.id_factura %}
+    <p><a class="button button--primary" href="{{ url_for('servicio_tecnico.factura_mantenimiento_empleado', id_orden=orden.id_orden) }}">Ver factura {{ orden.serie }}</a></p>
+  {% endif %}
+  {% if orden.estado != 'FINALIZADA' %}
+    <div class="access-form-card">
+      <h2>Diagnóstico y registro del trabajo</h2>
+      <form method="post" class="login-form">
+        <label for="diagnostico">Diagnóstico técnico</label>
+        <textarea id="diagnostico" name="diagnostico" maxlength="4000" rows="4" required>{{ orden.diagnostico or '' }}</textarea>
+        <label for="trabajo_realizado">Trabajo realizado / mantenimiento</label>
+        <textarea id="trabajo_realizado" name="trabajo_realizado" maxlength="4000" rows="4">{{ orden.trabajo_realizado or '' }}</textarea>
+        <label for="costo">Costo total (Bs), incluyendo mano de obra y piezas</label>
+        <input id="costo" name="costo" type="number" step="0.01" min="0" value="{{ orden.costo or 0 }}" required>
+        <label for="estado">Estado</label>
+        <select id="estado" name="estado" required>
+          {% for estado in estados %}
+            <option value="{{ estado }}" {{ 'selected' if orden.estado == estado else '' }}>{{ estado.replace('_', ' ') }}</option>
+          {% endfor %}
+        </select>
+        <button class="button button--primary" type="submit">Guardar registro</button>
+        <p>Al marcar como FINALIZADA se emitirá la factura con el costo registrado.</p>
+      </form>
+    </div>
+  {% else %}
+    <div class="access-form-card">
+      <h2>Mantenimiento realizado</h2>
+      <p>{{ orden.trabajo_realizado }}</p>
+      <p><strong>Total facturado: Bs {{ '%.2f'|format(orden.costo) }}</strong></p>
+    </div>
+  {% endif %}
+  {% if historial %}
+    <div class="access-form-card">
+      <h2>Registro de actividad</h2>
+      {% for evento in historial %}
+        <article class="order-card">
+          <div class="order-card__main">
+            <strong>{{ evento.tipo_evento.replace('_', ' ') }}</strong>
+            <small>{{ evento.fecha_evento.strftime('%d/%m/%Y %H:%M') }} · {{ evento.responsable or 'Sistema/cliente' }}</small>
+            <p>{{ evento.descripcion }}</p>
+            {% if evento.observaciones %}<small>{{ evento.observaciones }}</small>{% endif %}
+          </div>
+        </article>
+      {% endfor %}
+    </div>
+  {% endif %}
+</section>
+{% endblock %}

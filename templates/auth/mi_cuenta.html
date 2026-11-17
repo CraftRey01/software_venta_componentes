@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+{% block title %}Mi cuenta | TecnoParts{% endblock %}
+{% block content %}
+<section class="account-page">
+  <div class="section-heading">
+    <div><span class="eyebrow">PERFIL DE CLIENTE</span><h1>Mi cuenta</h1></div>
+    <a class="button button--outline" href="{{ url_for('tienda.catalogo') }}">Volver al catálogo</a>
+  </div>
+  <div class="cart-layout">
+    <section class="access-form-card">
+      <h2>Datos personales</h2>
+      <form method="post" class="login-form">
+        <label for="nombre">Nombre completo</label>
+        <input id="nombre" name="nombre" maxlength="150" value="{{ cliente.nombre }}" autocomplete="name" required>
+        <label for="telefono">Teléfono</label>
+        <input id="telefono" name="telefono" maxlength="30" value="{{ cliente.telefono or '' }}" autocomplete="tel">
+        <label for="email">Correo electrónico</label>
+        <input id="email" name="email" type="email" maxlength="254" value="{{ cliente.email or '' }}" autocomplete="email" required>
+        <label for="usuario">Nombre de usuario</label>
+        <input id="usuario" name="usuario" maxlength="60" value="{{ cliente.usuario }}" autocomplete="username" required>
+        <h3>Cambiar contraseña (opcional)</h3>
+        <label for="current_password">Contraseña actual</label>
+        <input id="current_password" name="current_password" type="password" autocomplete="current-password">
+        <label for="new_password">Nueva contraseña (mínimo 8 caracteres)</label>
+        <input id="new_password" name="new_password" type="password" minlength="8" autocomplete="new-password">
+        <button class="button button--primary" type="submit">Guardar datos</button>
+      </form>
+    </section>
+    <section class="access-form-card">
+      <h2>Direcciones de entrega</h2>
+      {% if direcciones %}
+        <div class="order-list">
+          {% for item in direcciones %}
+            <article class="order-card">
+              <span>{{ item.direccion }}</span>
+              <form method="post" action="{{ url_for('auth.eliminar_direccion', id_direccion=item.id_direccion) }}">
+                <button class="button button--outline button--small" type="submit">Eliminar</button>
+              </form>
+            </article>
+          {% endfor %}
+        </div>
+      {% else %}
+        <p>Aún no guardaste direcciones.</p>
+      {% endif %}
+      <form method="post" action="{{ url_for('auth.agregar_direccion') }}" class="login-form">
+        <label for="direccion">Agregar dirección</label>
+        <textarea id="direccion" name="direccion" maxlength="255" rows="3" required></textarea>
+        <button class="button button--outline" type="submit">Guardar dirección</button>
+      </form>
+    </section>
+  </div>
+</section>
+{% endblock %}

@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+{% block title %}{{ 'Editar' if registro else 'Registrar' }} inventario | TecnoParts{% endblock %}
+{% block content %}
+<section class="account-page">
+  <div class="section-heading">
+    <div>
+      <span class="eyebrow">ADMINISTRACIÓN</span>
+      <h1>{{ 'Editar inventario' if registro else 'Registrar inventario' }}</h1>
+      <p class="section-subtitle">La cantidad aquí registrada es la existencia única que usa el catálogo y las ventas.</p>
+    </div>
+    <a class="button button--outline" href="{{ url_for('productos.inventario') }}">Volver al inventario</a>
+  </div>
+  <form class="product-edit-form inventory-form" method="post">
+    <div class="product-fields">
+      {% if registro %}
+        <div class="field"><label>Producto</label><input value="{{ registro.producto }}" readonly></div>
+      {% else %}
+        <div class="field">
+          <label for="id_producto">Producto sin registro de inventario</label>
+          <select id="id_producto" name="id_producto" required {% if not productos %}disabled{% endif %}>
+            <option value="">Selecciona un producto</option>
+            {% for p in productos %}<option value="{{ p.id_producto }}">{{ p.nombre }} (ID {{ p.id_producto }})</option>{% endfor %}
+          </select>
+          {% if not productos %}<small>Todos los productos ya tienen un registro. Puedes cambiar existencias desde Editar.</small>{% endif %}
+        </div>
+      {% endif %}
+      <div class="form-grid">
+        <div class="field">
+          <label for="cantidad">Cantidad disponible</label>
+          <input id="cantidad" name="cantidad" type="number" min="0" required value="{{ registro.cantidad if registro else request.form.get('cantidad', 0) }}">
+        </div>
+        <div class="field">
+          <label for="fecha_ingreso">Fecha de ingreso</label>
+          <input id="fecha_ingreso" name="fecha_ingreso" type="date" value="{{ registro.fecha_ingreso.strftime('%Y-%m-%d') if registro and registro.fecha_ingreso else request.form.get('fecha_ingreso', '') }}">
+        </div>
+      </div>
+      <div class="form-grid">
+        <div class="field">
+          <label for="ubicacion">Ubicación</label>
+          <input id="ubicacion" name="ubicacion" maxlength="150" value="{{ registro.ubicacion if registro else request.form.get('ubicacion', '') }}" placeholder="Ej.: Almacén, estante A1">
+        </div>
+        {% if registro %}
+        <div class="field">
+          <label for="estado">Estado del inventario</label>
+          <select id="estado" name="estado">
+            <option value="ACTIVO" {% if registro.estado == 'ACTIVO' %}selected{% endif %}>Activo</option>
+            <option value="INACTIVO" {% if registro.estado == 'INACTIVO' %}selected{% endif %}>Inactivo</option>
+          </select>
+          <small>Los registros inactivos deben tener cantidad cero.</small>
+        </div>
+        {% endif %}
+      </div>
+      <div class="form-actions">
+        <button class="button button--primary" type="submit" {% if not registro and not productos %}disabled{% endif %}>Guardar inventario</button>
+        <a class="button button--outline" href="{{ url_for('productos.inventario') }}">Cancelar</a>
+      </div>
+    </div>
+  </form>
+</section>
+{% endblock %}

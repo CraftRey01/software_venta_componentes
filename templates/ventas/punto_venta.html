@@ -1,0 +1,265 @@
+{% extends "base.html" %}
+{% block title %}Punto de venta | TecnoParts{% endblock %}
+{% block content %}
+<section class="account-page">
+  <div class="section-heading">
+    <div><span class="eyebrow">VENTA EN TIENDA FÍSICA</span><h1>Punto de venta</h1></div>
+    <a class="button button--outline" href="{{ url_for('ventas.facturas') }}">Ver facturas</a>
+  </div>
+  <form class="pos-checkout" method="post" action="{{ url_for('ventas.punto_venta') }}" id="pos-form">
+    <div class="pos-customer-panel">
+      <label for="id_cliente">Cliente</label>
+      <select id="id_cliente" name="id_cliente" required>
+        <option value="">Selecciona un cliente</option>
+        {% for c in clientes %}<option value="{{ c.id_cliente }}">{{ c.nombre }}</option>{% endfor %}
+      </select>
+      <label for="metodo">Método de pago</label>
+      <select id="metodo" name="metodo">
+        <option value="EFECTIVO">Efectivo</option>
+        <option value="TARJETA">Tarjeta</option>
+        <option value="TRANSFERENCIA">Transferencia</option>
+      </select>
+      <div class="pos-product-picker">
+        <label for="producto-busqueda">Buscar producto</label>
+        <div class="pos-product-search">
+          <input id="producto-busqueda" type="search" placeholder="Escribe el nombre o la marca"
+                 autocomplete="off" role="combobox" aria-autocomplete="list"
+                 aria-expanded="false" aria-controls="producto-sugerencias">
+          <div id="producto-sugerencias" class="pos-product-suggestions" role="listbox" hidden></div>
+        </div>
+        <button type="button" class="button button--outline" id="agregar-producto" disabled>Agregar producto</button>
+        <p id="producto-existencia" class="pos-product-availability" aria-live="polite"></p>
+      </div>
+      <article id="producto-detalles" class="pos-product-details" aria-live="polite" hidden>
+        <div class="pos-product-details-heading">
+          <div><span class="eyebrow">PRODUCTO SELECCIONADO</span><h2 id="detalle-nombre"></h2></div>
+          <strong id="detalle-precio"></strong>
+        </div>
+        <p id="detalle-marca" class="pos-product-brand"></p>
+        <p id="detalle-descripcion" class="pos-product-description"></p>
+        <p id="detalle-categoria" class="pos-product-category"></p>
+      </article>
+      <p class="pos-help">Las existencias reservadas para compras en línea no aparecen disponibles para esta venta. El sistema volverá a validar el stock al cobrar.</p>
+    </div>
+    <div class="pos-cart-panel">
+      <h2>Detalle de venta</h2>
+      <div id="pos-cart-lines" class="pos-cart-lines"><p class="pos-empty">Todavía no agregaste productos.</p></div>
+      <div class="pos-total"><span>Total a cobrar</span><strong id="pos-total">Bs 0.00</strong></div>
+      <input type="hidden" name="lineas" id="pos-lines-json" value="[]">
+      <button class="button button--primary button--full" id="cobrar" type="submit" disabled>Cobrar y generar factura</button>
+    </div>
+  </form>
+</section>
+<script id="pos-products" type="application/json">{{ productos|tojson }}</script>
+<script>
+(() => {
+  const items = new Map();
+  const products = JSON.parse(document.getElementById("pos-products").textContent);
+  const search = document.getElementById("producto-busqueda");
+  const suggestions = document.getElementById("producto-sugerencias");
+  const availability = document.getElementById("producto-existencia");
+  const productDetails = document.getElementById("producto-detalles");
+  const addButton = document.getElementById("agregar-producto");
+  const linesContainer = document.getElementById("pos-cart-lines");
+  const totalNode = document.getElementById("pos-total");
+  const hidden = document.getElementById("pos-lines-json");
+  const submit = document.getElementById("cobrar");
+  let selectedProduct = null;
+  let matches = [];
+  let activeIndex = -1;
+
+  function render() {
+    linesContainer.replaceChildren();
+    let total = 0;
+    for (const [id, item] of items) {
+      const row = document.createElement("div");
+      row.className = "pos-cart-row";
+      const name = document.createElement("strong");
+      name.textContent = item.name;
+      const price = document.createElement("span");
+      price.textContent = `Bs ${item.price.toFixed(2)} c/u · ${item.stock} disponibles`;
+      const controls = document.createElement("div");
+      controls.className = "quantity-controls";
+      const decrease = document.createElement("button");
+      decrease.type = "button";
+      decrease.className = "quantity-button";
+      decrease.textContent = "−";
+      decrease.setAttribute("aria-label", `Quitar una unidad de ${item.name}`);
+      decrease.addEventListener("click", () => {
+        item.quantity -= 1;
+        if (item.quantity <= 0) items.delete(id);
+        render();
+      });
+      const quantity = document.createElement("span");
+      quantity.textContent = item.quantity;
+      const increase = document.createElement("button");
+      increase.type = "button";
+      increase.className = "quantity-button";
+      increase.textContent = "+";
+      increase.setAttribute("aria-label", `Agregar una unidad de ${item.name}`);
+      increase.disabled = item.quantity >= item.stock;
+      increase.addEventListener("click", () => {
+        if (item.quantity < item.stock) item.quantity += 1;
+        render();
+      });
+      controls.append(decrease, quantity, increase);
+      const subtotal = document.createElement("b");
+      subtotal.textContent = `Bs ${(item.price * item.quantity).toFixed(2)}`;
+      row.append(name, price, controls, subtotal);
+      linesContainer.append(row);
+      total += item.price * item.quantity;
+    }
+    if (items.size === 0) {
+      const empty = document.createElement("p");
+      empty.className = "pos-empty";
+      empty.textContent = "Todavía no agregaste productos.";
+      linesContainer.append(empty);
+    }
+    totalNode.textContent = `Bs ${total.toFixed(2)}`;
+    hidden.value = JSON.stringify(Array.from(items, ([id, item]) => ({
+      id_producto: Number(id), cantidad: item.quantity
+    })));
+    submit.disabled = items.size === 0;
+  }
+
+  function closeSuggestions() {
+    suggestions.hidden = true;
+    search.setAttribute("aria-expanded", "false");
+    search.removeAttribute("aria-activedescendant");
+  }
+
+  function selectProduct(product) {
+    selectedProduct = product;
+    search.value = product.nombre;
+    document.getElementById("detalle-nombre").textContent = product.nombre;
+    document.getElementById("detalle-precio").textContent = `Bs ${Number(product.precio).toFixed(2)}`;
+    document.getElementById("detalle-marca").textContent = `Marca: ${product.marca || "No especificada"}`;
+    document.getElementById("detalle-descripcion").textContent =
+      product.descripcion || "No hay descripción o especificaciones registradas para este producto.";
+    document.getElementById("detalle-categoria").textContent = `Categoría: ${product.categoria}`;
+    productDetails.hidden = false;
+    availability.textContent = product.stock > 0
+      ? `Hay ${product.stock} unidad${product.stock === 1 ? "" : "es"} disponible${product.stock === 1 ? "" : "s"}.`
+      : "Agotado: no hay existencia.";
+    availability.classList.toggle("is-out-of-stock", product.stock <= 0);
+    addButton.disabled = product.stock <= 0;
+    closeSuggestions();
+  }
+
+  function renderSuggestions() {
+    const query = search.value.trim().toLocaleLowerCase();
+    matches = products
+      .filter(product => !query || `${product.nombre} ${product.marca || ""} ${product.descripcion || ""}`.toLocaleLowerCase().includes(query))
+      .slice(0, 8);
+    activeIndex = -1;
+    suggestions.replaceChildren();
+
+    if (matches.length === 0) {
+      const empty = document.createElement("p");
+      empty.className = "pos-product-no-results";
+      empty.textContent = "No se encontraron productos.";
+      suggestions.append(empty);
+    } else {
+      matches.forEach((product, index) => {
+        const option = document.createElement("button");
+        option.type = "button";
+        option.className = "pos-product-option";
+        option.id = `pos-product-option-${product.id_producto}`;
+        option.setAttribute("role", "option");
+        option.setAttribute("aria-selected", "false");
+
+        const description = document.createElement("span");
+        description.className = "pos-product-option-details";
+        const name = document.createElement("strong");
+        name.textContent = product.nombre;
+        const details = document.createElement("span");
+        details.textContent = `${product.marca ? `${product.marca} · ` : ""}Bs ${Number(product.precio).toFixed(2)}`;
+        description.append(name, details);
+        const stock = document.createElement("span");
+        stock.className = product.stock > 0 ? "pos-stock-available" : "pos-stock-empty";
+        stock.textContent = product.stock > 0 ? `${product.stock} disponibles` : "Agotado";
+        const productDescription = document.createElement("span");
+        productDescription.className = "pos-product-option-description";
+        productDescription.textContent = product.descripcion || "Sin descripción";
+        const productInfo = document.createElement("span");
+        productInfo.className = "pos-product-option-info";
+        productInfo.append(description, productDescription);
+        option.append(productInfo, stock);
+        option.addEventListener("mousedown", event => event.preventDefault());
+        option.addEventListener("click", () => selectProduct(product));
+        suggestions.append(option);
+        if (index === activeIndex) option.setAttribute("aria-selected", "true");
+      });
+    }
+
+    suggestions.hidden = false;
+    search.setAttribute("aria-expanded", "true");
+  }
+
+  function setActiveSuggestion(index) {
+    const options = suggestions.querySelectorAll(".pos-product-option");
+    if (options.length === 0) return;
+    activeIndex = (index + options.length) % options.length;
+    options.forEach((option, optionIndex) => {
+      option.setAttribute("aria-selected", String(optionIndex === activeIndex));
+    });
+    search.setAttribute("aria-activedescendant", options[activeIndex].id);
+  }
+
+  search.addEventListener("input", () => {
+    selectedProduct = null;
+    availability.textContent = "";
+    availability.classList.remove("is-out-of-stock");
+    productDetails.hidden = true;
+    addButton.disabled = true;
+    renderSuggestions();
+  });
+  search.addEventListener("keydown", event => {
+    if (event.key === "ArrowDown" && !suggestions.hidden) {
+      event.preventDefault();
+      setActiveSuggestion(activeIndex + 1);
+    } else if (event.key === "ArrowUp" && !suggestions.hidden) {
+      event.preventDefault();
+      setActiveSuggestion(activeIndex <= 0 ? matches.length - 1 : activeIndex - 1);
+    } else if (event.key === "Enter" && !suggestions.hidden) {
+      event.preventDefault();
+      if (matches[activeIndex] || matches[0]) selectProduct(matches[activeIndex] || matches[0]);
+    } else if (event.key === "Escape") {
+      closeSuggestions();
+    }
+  });
+  document.addEventListener("click", event => {
+    if (!event.target.closest(".pos-product-search")) closeSuggestions();
+  });
+
+  addButton.addEventListener("click", () => {
+    if (!selectedProduct || selectedProduct.stock <= 0) return;
+    const id = String(selectedProduct.id_producto);
+    const item = items.get(id) || {
+      name: selectedProduct.nombre,
+      price: Number(selectedProduct.precio),
+      stock: Number(selectedProduct.stock),
+      quantity: 0
+    };
+    if (item.quantity >= item.stock) return;
+    item.quantity += 1;
+    items.set(id, item);
+    render();
+    selectedProduct = null;
+    search.value = "";
+    availability.textContent = "";
+    availability.classList.remove("is-out-of-stock");
+    productDetails.hidden = true;
+    addButton.disabled = true;
+    closeSuggestions();
+    search.focus();
+  });
+
+  document.getElementById("pos-form").addEventListener("submit", event => {
+    if (items.size === 0 || !document.getElementById("id_cliente").value) {
+      event.preventDefault();
+    }
+  });
+})();
+</script>
+{% endblock %}

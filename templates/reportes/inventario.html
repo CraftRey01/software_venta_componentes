@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% block title %}Alertas de reorden | TecnoParts{% endblock %}
+{% block content %}
+<section class="account-page">
+  <div class="section-heading">
+    <div>
+      <span class="eyebrow">CONTROL DE EXISTENCIAS</span>
+      <h1>Alertas de reorden</h1>
+      <p class="section-subtitle">Punto de reorden calculado con las ventas válidas de los últimos {{ periodo_demanda }} días.</p>
+    </div>
+    <a class="button button--outline" href="{{ url_for('productos.inventario') }}">Gestión de inventario</a>
+  </div>
+  {% if alertas %}
+  <div class="table-wrap">
+    <table class="data-table">
+      <thead><tr><th>Producto</th><th>Stock físico</th><th>Reservado</th><th>Disponible</th><th>Demanda ({{ periodo_demanda }} días)</th><th>Punto de reorden</th><th>Estado</th></tr></thead>
+      <tbody>
+      {% for a in alertas %}
+        <tr>
+          <td><strong>{{ a.nombre }}</strong></td>
+          <td>{{ a.cantidad }}</td>
+          <td>{{ a.reservado }}</td>
+          <td>{{ a.disponible }}</td>
+          <td>{{ a.demanda_periodo }}</td>
+          <td>{{ "%.2f"|format(a.rop_calculado) }}</td>
+          <td>
+            {% if a.disponible <= a.rop_calculado %}
+              <span class="rop-status rop-status--alerta">Reponer</span>
+            {% else %}
+              <span class="rop-status rop-status--ok">Existencia suficiente</span>
+            {% endif %}
+          </td>
+        </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% else %}
+    <div class="empty-state"><h2>Sin datos de inventario</h2><p>No hay registros para mostrar.</p></div>
+  {% endif %}
+</section>
+{% endblock %}

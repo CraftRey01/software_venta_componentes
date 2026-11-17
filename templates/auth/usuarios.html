@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% block title %}Gestión de usuarios | TecnoParts{% endblock %}
+{% block content %}
+<section class="account-page">
+  <div class="section-heading">
+    <div><span class="eyebrow">ADMINISTRACIÓN</span><h1>Gestión de usuarios</h1></div>
+    <div>
+      <a class="button button--primary" href="{{ url_for('auth.nuevo_usuario') }}">Crear vendedor o administrador</a>
+      <a class="button button--outline" href="{{ url_for('reportes.ingresos') }}">Volver al panel</a>
+    </div>
+  </div>
+  {% if usuarios %}
+    <div class="order-list">
+      {% for cuenta in usuarios %}
+        <article class="order-card">
+          <div class="order-card__main">
+            <strong>{{ cuenta.nombre }}</strong>
+            <small>@{{ cuenta.usuario }} · {{ cuenta.rol }}{% if cuenta.email %} · {{ cuenta.email }}{% endif %}</small>
+          </div>
+          <span class="order-status">{{ "Activa" if cuenta.activo else "Inactiva" }}</span>
+          <form method="post" action="{{ url_for('auth.cambiar_estado_usuario', id_usuario=cuenta.id_usuario) }}">
+            <button class="button button--outline button--small" type="submit">
+              {{ "Desactivar" if cuenta.activo else "Activar" }}
+            </button>
+          </form>
+          {% if cuenta.rol in ("ADMINISTRADOR", "VENDEDOR") %}
+            <a class="button button--outline button--small"
+               href="{{ url_for('auth.editar_usuario', id_usuario=cuenta.id_usuario) }}">Editar</a>
+            <form method="post" action="{{ url_for('auth.eliminar_usuario', id_usuario=cuenta.id_usuario) }}"
+                  onsubmit="return confirm('¿Eliminar esta cuenta? Se conservarán sus registros relacionados.');">
+              <button class="button button--outline button--small" type="submit">Eliminar</button>
+            </form>
+          {% endif %}
+        </article>
+      {% endfor %}
+    </div>
+  {% else %}
+    <div class="empty-state"><p>No hay cuentas registradas.</p></div>
+  {% endif %}
+</section>
+{% endblock %}

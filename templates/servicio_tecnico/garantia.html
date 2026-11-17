@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block title %}Consulta de garantía | TecnoParts{% endblock %}
+{% block content %}
+<section class="account-page">
+    <div class="section-heading">
+        <div><span class="eyebrow">SOPORTE TECNOPARTS</span><h1>Consulta de garantía</h1></div>
+    </div>
+    <div class="access-form-card warranty-card">
+        <p>Ingresa el número de serie para revisar el estado de cobertura del equipo.</p>
+        <form method="post" class="login-form">
+            <label for="serie">Número de serie</label>
+            <input id="serie" name="serie" value="{{ request.form.get('serie', '') }}" required>
+            <button type="submit" class="button button--primary">Consultar garantía</button>
+        </form>
+        {% if equipo %}
+            <div class="warranty-result">
+                <span class="eyebrow">EQUIPO ENCONTRADO</span>
+                <h2>{{ equipo.marca }} {{ equipo.modelo or '' }}</h2>
+                <p>Cliente: {{ equipo.nombre }} · Serie: {{ request.form.get('serie') }}</p>
+                <p>Compra: {{ equipo.fecha_compra }} · Días transcurridos: {{ equipo.dias }}</p>
+            </div>
+        {% endif %}
+    </div>
+</section>
+{% endblock %}
